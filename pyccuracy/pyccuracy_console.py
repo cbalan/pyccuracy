@@ -26,6 +26,8 @@ from pyccuracy.story_runner import StoryRunner, ParallelStoryRunner
 from pyccuracy import Version, Release
 from pyccuracy.colored_terminal import ProgressBar, TerminalController
 
+from ConfigParser import ConfigParser
+
 __version_string__ = "pyccuracy %s (release '%s')" % (Version, Release)
 __docformat__ = 'restructuredtext en'
 
@@ -138,6 +140,9 @@ def main(arguments=sys.argv[1:]):
     parser.add_option("-v", "--verbosity", dest="verbosity", default="3", help="Verbosity. 0 - does not show any output, 1 - shows text progress, 2 - shows animated progress bar, 3 - shows action by action [default: %default].")
     parser.add_option("--suppresswarnings", action="store_true", dest="suppress_warnings", default=False, help="Suppress Pyccuracy warnings [default: %default].")
 
+    # settings
+    parser.add_option("--extra-args-file", dest="extra_args_file", default="./config.ini", help="Extra arguments file [default: %default].")
+    
     options, args = parser.parse_args(arguments)
 
     workers = options.workers and int(options.workers) or None
@@ -145,8 +150,16 @@ def main(arguments=sys.argv[1:]):
 
     if not options.dir:
         options.dir = [os.curdir]
-
+     
     extra_args = {}
+    try:
+        extra_args_file = ConfigParser()
+        extra_args_file.read(options.extra_args_file)
+        extra_args = dict(extra_args_file.items('global'))
+    except:
+        # @todo: Log/explain exceptions
+        raise
+    
     if args:
         for arg in args:
             if not "=" in arg:

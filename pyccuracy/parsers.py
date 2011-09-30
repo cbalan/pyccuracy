@@ -73,6 +73,12 @@ class FileParser(object):
 
     def parse_story_file(self, story_file_path, settings):
         story_text = self.file_object.read_file(story_file_path)
+        try:
+            story_text = story_text%settings.extra_args
+        except:
+            # @todo: Log/explain exceptions
+            raise
+        
         story_lines = [line for line in story_text.splitlines() if line.strip() != ""]
 
         headers = self.assert_header(story_lines, settings.default_culture)

@@ -99,6 +99,12 @@ class PageRegistry(object):
                 url_pieces.append(settings.tests_dirs[0]) #gotta think of a way to fix this
         
         if klass_object:
+            try:
+                klass_object.url = klass_object.url%settings.extra_args
+            except:
+                # @todo: Log/explain exceptions
+                raise
+                 
             url_pieces.append(klass_object.url)
             
             if hasattr(klass_object, 'port') and url_pieces[0].startswith("http"):
