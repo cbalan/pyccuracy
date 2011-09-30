@@ -158,7 +158,7 @@ def main(arguments=sys.argv[1:]):
         extra_args = dict(extra_args_file.items('global'))
     except:
         # @todo: Log/explain exceptions
-        raise
+        pass
     
     if args:
         for arg in args:
