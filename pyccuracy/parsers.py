@@ -25,6 +25,7 @@ from pyccuracy.languages import LanguageGetter
 from pyccuracy.common import locate
 from pyccuracy.fixture import Fixture
 from pyccuracy.fixture_items import Story, Action, Scenario
+from string import Template
 
 ident_re = re.compile(r'^(?P<ident>[ \t]*)')
 
@@ -73,11 +74,8 @@ class FileParser(object):
 
     def parse_story_file(self, story_file_path, settings):
         story_text = self.file_object.read_file(story_file_path)
-        try:
-            story_text = story_text%settings.extra_args
-        except:
-            # @todo: Log/explain exceptions
-            raise
+        
+        story_text = Template(story_text).safe_substitute(settings.extra_args)
         
         story_lines = [line for line in story_text.splitlines() if line.strip() != ""]
 

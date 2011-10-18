@@ -22,6 +22,7 @@ import traceback
 from pyccuracy.actions import ActionNotFoundError
 from pyccuracy.errors import *
 from pyccuracy.common import StatusItem, TimedItem, Status
+from string import Template
 
 class Story(StatusItem, TimedItem):
     '''Class that represents a story to be run by Pyccuracy.
@@ -95,6 +96,10 @@ class Action(StatusItem, TimedItem):
     def execute(self, context):
         if context.settings.on_before_action:
             context.settings.on_before_action(context, self, self.args, self.kwargs)
+        
+        for key, value in self.kwargs.items():
+            self.kwargs[key] = Template(value).safe_substitute(context.settings.extra_args)
+
         try:
             self.execute_function(context, *self.args, **self.kwargs)
             if context.settings.on_action_successful:

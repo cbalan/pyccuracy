@@ -18,6 +18,7 @@
 
 from os.path import abspath, exists
 from urlparse import urljoin
+from string import Template
 lxml_available = True
 try:
     from lxml import cssselect
@@ -99,11 +100,7 @@ class PageRegistry(object):
                 url_pieces.append(settings.tests_dirs[0]) #gotta think of a way to fix this
         
         if klass_object:
-            try:
-                klass_object.url = klass_object.url%settings.extra_args
-            except:
-                # @todo: Log/explain exceptions
-                raise
+            klass_object.url = Template(klass_object.url).safe_substitute(settings.extra_args)
                  
             url_pieces.append(klass_object.url)
             
