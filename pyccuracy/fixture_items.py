@@ -98,7 +98,10 @@ class Action(StatusItem, TimedItem):
             context.settings.on_before_action(context, self, self.args, self.kwargs)
         
         for key, value in self.kwargs.items():
-            self.kwargs[key] = Template(value).safe_substitute(context.settings.extra_args)
+            try:
+                self.kwargs[key] = Template(value).safe_substitute(context.settings.extra_args)
+            except:
+                pass
 
         try:
             self.execute_function(context, *self.args, **self.kwargs)
